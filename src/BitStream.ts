@@ -23,6 +23,10 @@ class BitStream {
         return this.bits[this.position++] == 1;
     }
 
+    public readHalfNibble(): number {
+        return this.readUInt(2);
+    }
+
     public readNibble(): number {
         return this.readUInt(4);
     }
@@ -41,6 +45,13 @@ class BitStream {
 
     public readUInt64(): number {
         return this.readUInt(64);
+    }
+
+    public readMixedByteOrUInt16(): number {
+        if (!this.readBoolean()) {
+            return this.readByte();
+        }
+        return this.readUInt16();
     }
 
     public readUInt(bitCount: number): number {
@@ -72,6 +83,10 @@ class BitStream {
         this.bits.push(value ? 1 : 0);
     }
 
+    public writeHalfNibble(value: number) {
+        this.writeUInt(value, 2);
+    }
+
     public writeNibble(value: number) {
         this.writeUInt(value, 4);
     }
@@ -90,6 +105,16 @@ class BitStream {
 
     public writeUInt64(value: number) {
         this.writeUInt(value, 64);
+    }
+
+    public writeMixedByteOrUInt16(value: number) {
+        if (value <= 255) {
+            this.writeBoolean(false);
+            this.writeByte(value);
+        } else {
+            this.writeBoolean(true);
+            this.writeUInt16(value);
+        }
     }
 
     public writeUInt(value: number, bitCount: number) {

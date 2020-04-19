@@ -9,7 +9,7 @@
   <packagePublishing>
     <application>TS</application>
     <name>Javascript.BitStream</name>
-    <version>1.0</version>
+    <version>1.1</version>
     <files>
       <path>src</path>
       <path>tsconfig.json</path>
