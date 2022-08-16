@@ -47,11 +47,19 @@ class BitStream {
         return this.readUInt(64);
     }
 
-    public readMixedByteOrUInt16(): number {
-        if (!this.readBoolean()) {
-            return this.readByte();
+    public readMixedByteOrUInt16(mode: 'prefixBit' | 'optimistic' = 'prefixBit'): number {
+        if (mode == 'prefixBit') {
+            if (!this.readBoolean()) {
+                return this.readByte();
+            }
+            return this.readUInt16();
+        } else {
+            let value = this.readByte();
+            if (value == 255) {
+                value = this.readUInt16();
+            }
+            return value;
         }
-        return this.readUInt16();
     }
 
     public readUInt(bitCount: number): number {
@@ -107,13 +115,22 @@ class BitStream {
         this.writeUInt(value, 64);
     }
 
-    public writeMixedByteOrUInt16(value: number) {
-        if (value <= 255) {
-            this.writeBoolean(false);
-            this.writeByte(value);
+    public writeMixedByteOrUInt16(value: number, mode: 'prefixBit' | 'optimistic' = 'prefixBit') {
+        if (mode == 'prefixBit') {
+            if (value <= 255) {
+                this.writeBoolean(false);
+                this.writeByte(value);
+            } else {
+                this.writeBoolean(true);
+                this.writeUInt16(value);
+            }
         } else {
-            this.writeBoolean(true);
-            this.writeUInt16(value);
+            if (value < 255) {
+                this.writeByte(value);
+            } else {
+                this.writeByte(255);
+                this.writeUInt16(value);
+            }
         }
     }
 
