@@ -62,6 +62,21 @@ class BitStream {
         }
     }
 
+    public readMixedUInt16OrUInt32(mode: 'prefixBit' | 'optimistic' = 'prefixBit'): number {
+        if (mode == 'prefixBit') {
+            if (!this.readBoolean()) {
+                return this.readUInt16();
+            }
+            return this.readUInt32();
+        } else {
+            let value = this.readUInt16();
+            if (value == 65535) {
+                value = this.readUInt32();
+            }
+            return value;
+        }
+    }
+
     public readUInt(bitCount: number): number {
         let result = 0;
         while (bitCount > 0) {
@@ -71,16 +86,24 @@ class BitStream {
         return result;
     }
 
-    public readString(): string {
+    public readString(mode: 'standard' | 'optimizeFor7Bits' = 'standard'): string {
         let length = this.readByte();
-        if (length == 255) {
+        if (length === 255) {
             length = this.readUInt32();
         }
         let result = '';
         for (let i = 0; i < length; i++) {
-            let code = this.readByte();
-            if (code == 255) {
-                code = this.readUInt32();
+            let code = 0;
+            if (mode === 'standard') {
+                code = this.readByte();
+                if (code === 255) {
+                    code = this.readUInt32();
+                }
+            } else {
+                code = this.readUInt(7);
+                if (code === 127) {
+                    code = this.readUInt32();
+                }
             }
             result += String.fromCharCode(code);
         }
@@ -134,6 +157,25 @@ class BitStream {
         }
     }
 
+    public writeMixedUInt16OrUInt32(value: number, mode: 'prefixBit' | 'optimistic' = 'prefixBit') {
+        if (mode == 'prefixBit') {
+            if (value <= 65535) {
+                this.writeBoolean(false);
+                this.writeUInt16(value);
+            } else {
+                this.writeBoolean(true);
+                this.writeUInt32(value);
+            }
+        } else {
+            if (value < 65535) {
+                this.writeUInt16(value);
+            } else {
+                this.writeUInt16(65535);
+                this.writeUInt32(value);
+            }
+        }
+    }
+
     public writeUInt(value: number, bitCount: number) {
         let bits = BitStream.convertUInt64ToBits(value);
         for (let i = 0; i < bitCount; i++) {
@@ -141,7 +183,7 @@ class BitStream {
         }
     }
 
-    public writeString(value: string) {
+    public writeString(value: string, mode: 'standard' | 'optimizeFor7Bits' = 'standard') {
         if (value.length < 255) {
             this.writeByte(value.length);
         } else {
@@ -150,11 +192,20 @@ class BitStream {
         }
         for (let i = 0; i < value.length; i++) {
             let n = value.charCodeAt(i);
-            if (n < 255) {
-                this.writeByte(n);
+            if (mode === 'standard') {
+                if (n < 255) {
+                    this.writeByte(n);
+                } else {
+                    this.writeByte(255);
+                    this.writeUInt32(n);
+                }
             } else {
-                this.writeByte(255);
-                this.writeUInt32(n);
+                if (n < 127) {
+                    this.writeUInt(n, 7);
+                } else {
+                    this.writeUInt(127, 7);
+                    this.writeUInt32(n);
+                }
             }
         }
     }
