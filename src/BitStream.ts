@@ -214,6 +214,10 @@ class BitStream {
         return btoa(binary);
     }
 
+    public size(): number {
+        return Math.ceil(this.bits.length / 8);
+    }
+
     private static convertUInt64ToBits(value: number): number[] {
         let result: number[] = [];
         let bits = value.toString(2);
