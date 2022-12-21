@@ -108,6 +108,12 @@ class BitStream {
         this.bits.push(value ? 1 : 0);
     }
 
+    public writeBooleans(values: boolean[]) {
+        for (let value of values) {
+            this.writeBoolean(value);
+        }
+    }
+
     public writeHalfNibble(value: number) {
         this.writeUInt(value, 2);
     }
