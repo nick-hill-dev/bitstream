@@ -134,7 +134,7 @@ class BitStream {
 
     public writeUIntMixed(value: number, minBits: number, maxBits: number, mode: 'prefixBit' | 'optimistic' = 'prefixBit') {
         let maxValue = Math.pow(2, minBits) - 1;
-        if (mode == 'prefixBit') {
+        if (mode === 'prefixBit') {
             if (value <= maxValue) {
                 this.writeBoolean(false);
                 this.writeUInt(value, minBits);
@@ -197,6 +197,19 @@ class BitStream {
 
     public writeStream(stream: BitStream) {
         this.bits.push(...stream.bits);
+    }
+
+    public writeHuffmanGraph(graph: HuffmanNode) {
+        let graphBits = graph.getCompressedRepresentation();
+        this.writeUIntMixed(graphBits.bits.length, 10, 24, 'optimistic');
+        this.writeStream(graphBits);
+    }
+
+    public writeHuffmanEncoding(text: string, graph: HuffmanNode, minLengthBits: number = 16, maxLengthBits: number = 32, lengthBitsMode: 'prefixBit' | 'optimistic' = 'optimistic') {
+        let lookupTable = graph.createLookupTable();
+        let encodeResponse = HuffmanCoding.encode(text, lookupTable);
+        this.writeUIntMixed(encodeResponse.bits.bits.length, minLengthBits, maxLengthBits, lengthBitsMode);
+        this.writeStream(encodeResponse.bits);
     }
 
     public toByteArray(): Uint8Array {
