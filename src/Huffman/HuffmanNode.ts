@@ -8,12 +8,18 @@ class HuffmanNode {
     ) {
     }
 
-    public getCompressedRepresentation(): BitStream {
+    public getCompressedRepresentation(valueTypes: 'char' | 'numericByte' | 'string' = 'char'): BitStream {
         let result = new BitStream();
         this.enum(node => {
             if (node.value) {
                 result.writeBoolean(true);
-                result.writeByte(node.value.charCodeAt(0));
+                if (valueTypes === 'char') {
+                    result.writeByte(node.value.charCodeAt(0));
+                } else if (valueTypes === 'numericByte') {
+                    result.writeByte(parseInt(node.value));
+                } else {
+                    result.writeString(node.value);
+                }
             } else {
                 result.writeBoolean(false);
             }
@@ -22,7 +28,7 @@ class HuffmanNode {
     }
 
     public createLookupTable(): HuffmanLookupTable {
-        
+
         let result: HuffmanLookupTable = {};
         if (!this.left && !this.right && this.value) {
             result[this.value] = [false];
