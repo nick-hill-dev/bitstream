@@ -195,6 +195,10 @@ class BitStream {
         }
     }
 
+    public writeStream(stream: BitStream) {
+        this.bits.push(...stream.bits);
+    }
+
     public toByteArray(): Uint8Array {
         let result = new Uint8Array(Math.ceil(this.bits.length / 8));
         for (let i = 0; i < this.bits.length; i++) {
