@@ -1,11 +1,11 @@
 class HuffmanCoding {
 
-    public static createGraphFor(text: string): HuffmanNode {
+    public static createGraphFor(values: string | string[]): HuffmanNode {
         let graph: HuffmanNode[] = [];
-        for (let c of text) {
-            let entry = graph.find(n => n.value === c);
+        for (let value of values) {
+            let entry = graph.find(n => n.value === value);
             if (!entry) {
-                entry = new HuffmanNode(c, 0);
+                entry = new HuffmanNode(value, 0);
                 graph.push(entry);
             }
             entry.size++;
