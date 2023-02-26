@@ -1,1 +1,0 @@
-type HuffmanLookupTable = { [name: string]: boolean[] };
