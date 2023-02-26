@@ -309,29 +309,6 @@ class BitStream {
         this.bits.push(...stream.bits);
     }
 
-    public readHuffmanGraph(): HuffmanNode {
-        let graphSize = this.readUIntMixed(10, 24, 'optimistic');
-        return HuffmanNode.fromCompressedRepresentation(graphSize, this);
-    }
-
-    public writeHuffmanGraph(graph: HuffmanNode) {
-        let graphBits = graph.getCompressedRepresentation();
-        this.writeUIntMixed(graphBits.bits.length, 10, 24, 'optimistic');
-        this.writeStream(graphBits);
-    }
-
-    public readHuffmanEncoding(graph: HuffmanNode, minLengthBits: number = 16, maxLengthBits: number = 32, lengthBitsMode: 'prefixBit' | 'optimistic' = 'optimistic'): string {
-        let length = this.readUIntMixed(minLengthBits, maxLengthBits, lengthBitsMode);
-        return HuffmanCoding.decode(this, length, graph);
-    }
-
-    public writeHuffmanEncoding(text: string, graph: HuffmanNode, minLengthBits: number = 16, maxLengthBits: number = 32, lengthBitsMode: 'prefixBit' | 'optimistic' = 'optimistic') {
-        let lookupTable = graph.createLookupTable();
-        let encodeResponse = HuffmanCoding.encode(text, lookupTable);
-        this.writeUIntMixed(encodeResponse.bits.bits.length, minLengthBits, maxLengthBits, lengthBitsMode);
-        this.writeStream(encodeResponse.bits);
-    }
-
     /** Converts the data in this bit stream into a compact byte array. */
     public toByteArray(): Uint8Array {
         let result = new Uint8Array(Math.ceil(this.bits.length / 8));
