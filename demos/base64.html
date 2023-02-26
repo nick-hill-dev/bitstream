@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Simple Example - BitStream Demos</title>
+    <script src="../bin/bitstream.js"></script>
+</head>
+
+<body>
+    <script>
+        window.onload = () => {
+
+            let bits = new BitStream();
+            bits.writeBoolean(true);
+            bits.writeByte(123);
+            bits.writeString('Hello World!');
+            
+            let str = bits.toString();
+
+            alert(`Bit Stream as base64-encoded string:\n\n${str}`);
+
+            let bitsDecoded = BitStream.fromString(str);
+
+            alert(`Boolean: ${bits.readBoolean()}\n` +
+                  `Byte: ${bits.readByte()}\n` +
+                  `String: ${bits.readString()}`);
+
+        };
+    </script>
+</body>
+
+</html>

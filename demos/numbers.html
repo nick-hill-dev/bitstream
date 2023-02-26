@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Strings Example - BitStream Demos</title>
+    <script src="../bin/bitstream.js"></script>
+</head>
+
+<body>
+    <script>
+        window.onload = () => {
+            let bits = new BitStream();
+
+            bits.writeHalfNibble(3); // Maximum number that can be stored in 2 bits
+            bits.writeNibble(15); // Maximum number that can be stored in 4 bits
+            bits.writeByte(255); // Maximum number that can be stored in 8 bits
+            bits.writeUInt16(65535); // Etc
+            bits.writeUInt32(Math.pow(2, 32) - 1);
+            bits.writeUInt64(Math.pow(2, 63) - 1);
+            bits.writeUInt(63, 6); // Use a maximum of 6 bits, in this case the maximum number that can be stored is 63
+
+            bits.position = 0;
+
+            alert(`${bits.readHalfNibble()}, ${bits.readNibble()}, ${bits.readByte()}, ${bits.readUInt16()}, ${bits.readUInt32()}, ${bits.readUInt64()}, ${bits.readUInt(6)}`);
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Simple Example - BitStream Demos</title>
+    <script src="../bin/bitstream.js"></script>
+</head>
+
+<body>
+    <script>
+        window.onload = () => {
+            let bits = new BitStream();
+            bits.writeBoolean(false);
+            bits.writeByte(100);
+            bits.writeString('Hello World!');
+            bits.position = 0;
+            alert(`Bit Stream is ${bits.size()} bytes long.\n` +
+                  `Boolean: ${bits.readBoolean()}\n` +
+                  `Byte: ${bits.readByte()}\n` +
+                  `String: ${bits.readString()}`);
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Strings Example - BitStream Demos</title>
+    <script src="../bin/bitstream.js"></script>
+</head>
+
+<body>
+    <script>
+        window.onload = () => {
+            for (let string of ['A short string!', 'A longer string, requiring more length bits!']) {
+                for (let type of ['optimizeFor7Bits', 'standard']) {
+                    let bits = new BitStream();
+                    bits.writeString(string, 4, 8, type);
+                    bits.position = 0;
+                    alert(`'${bits.readString(4, 8, type)}'\nBit Stream is ${bits.size()} bytes long.\nString storage: ${type}, length prefix bits 4 or 8.`);
+                }
+            }
+        };
+    </script>
+</body>
+
+</html>
