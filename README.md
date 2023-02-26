@@ -29,6 +29,7 @@ alert(`Boolean: ${bits.readBoolean()}\n` +
 
 ### Features
 
+• Fully documented with JSDoc, integrated with IntelliSense in Visual Studio Code.
 • Support for bits, arrays of bits.
 • Supports all kinds of whole numbers: half-nibbles, nibbles, bytes, 2-byte numbers, 4-byte numbers and 8-byte numbers.
 • Can use arbitrary numbers of bits to represent a number.
