@@ -231,8 +231,8 @@ class BitStream {
      */
     public writeUIntMixed(value: number, minBits: number, maxBits: number, mode: 'prefixBit' | 'optimistic' = 'prefixBit') {
         let maxValue = Math.pow(2, minBits) - 1;
-        if (value < 0 || value > maxValue) {
-            throw new Error('Value is out of range for the specified UInt.');
+        if (value < 0 || value > Math.pow(2, maxBits) - 1) {
+            throw new Error(`Value is out of range for the specified ${maxBits}-bit UInt (${value}).`);
         }
         if (mode === 'prefixBit') {
             if (value <= maxValue) {
