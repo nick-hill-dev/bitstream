@@ -171,26 +171,41 @@ class BitStream {
 
     /** Writes an unsigned integer value (between 0 and 3 inclusive) to the bit stream, writing two bits of information. */
     public writeHalfNibble(value: number) {
+        if (value < 0 || value > 3) {
+            throw new Error('Value is out of range for a half nibble.');
+        }
         this.writeUInt(value, 2);
     }
 
     /** Writes an unsigned integer value (between 0 and 15 inclusive) to the bit stream, writing four bits of information. */
     public writeNibble(value: number) {
+        if (value < 0 || value > 15) {
+            throw new Error('Value is out of range for a nibble.');
+        }
         this.writeUInt(value, 4);
     }
 
     /** Writes an unsigned integer value (between 0 and 255 inclusive) to the bit stream, writing eight bits of information. */
     public writeByte(value: number) {
+        if (value < 0 || value > 255) {
+            throw new Error('Value is out of range for a byte.');
+        }
         this.writeUInt(value, 8);
     }
 
     /** Writes an unsigned integer value (between 0 and 65,535 inclusive) to the bit stream, writing 16 bits of information. */
     public writeUInt16(value: number) {
+        if (value < 0 || value > 65535) {
+            throw new Error('Value is out of range for a UInt16.');
+        }
         this.writeUInt(value, 16);
     }
 
     /** Writes an unsigned integer value (between 0 and 4,294,967,295 inclusive) to the bit stream, writing 32 bits of information. */
     public writeUInt32(value: number) {
+        if (value < 0 || value > 4294967295) {
+            throw new Error('Value is out of range for a UInt32.');
+        }
         this.writeUInt(value, 32);
     }
 
@@ -216,6 +231,9 @@ class BitStream {
      */
     public writeUIntMixed(value: number, minBits: number, maxBits: number, mode: 'prefixBit' | 'optimistic' = 'prefixBit') {
         let maxValue = Math.pow(2, minBits) - 1;
+        if (value < 0 || value > maxValue) {
+            throw new Error('Value is out of range for the specified UInt.');
+        }
         if (mode === 'prefixBit') {
             if (value <= maxValue) {
                 this.writeBoolean(false);
@@ -242,6 +260,9 @@ class BitStream {
      * @see `writeUIntMixed` For how the `mode` parameter directs how the information is written.
      */
     public writeMixedByteOrUInt16(value: number, mode: 'prefixBit' | 'optimistic' = 'prefixBit') {
+        if (value < 0 || value > 65535) {
+            throw new Error('Value is out of range for the mixed byte / UInt16.');
+        }
         this.writeUIntMixed(value, 8, 16, mode);
     }
 
@@ -253,11 +274,18 @@ class BitStream {
      * @see `writeUIntMixed` For how the `mode` parameter directs how the information is written.
      */
     public writeMixedUInt16OrUInt32(value: number, mode: 'prefixBit' | 'optimistic' = 'prefixBit') {
+        if (value < 0 || value > 4294967295) {
+            throw new Error('Value is out of range for the mixed UInt16 / UInt32.');
+        }
         this.writeUIntMixed(value, 16, 32, mode);
     }
 
     /** Writes `bitCount` number of bits to the bit stream that represent the specified `value`. */
     public writeUInt(value: number, bitCount: number) {
+        let maxValue = Math.pow(2, bitCount) - 1;
+        if (value < 0 || value > maxValue) {
+            throw new Error(`Value is out of range for the ${bitCount}-bit number.`);
+        }
         let bits = BitStream.convertUInt64ToBits(value);
         for (let i = 0; i < bitCount; i++) {
             this.bits.push(bits[64 - bitCount + i]);
@@ -278,6 +306,9 @@ class BitStream {
      */
     public writeString(value: string, minLengthBits: number = 8, maxLengthBits: number = 32, mode: 'standard' | 'optimizeFor7Bits' = 'standard') {
         let n = Math.pow(2, minLengthBits) - 1;
+        if (value.length > Math.pow(2, maxLengthBits) - 1) {
+            throw new Error(`The string is too long.`);
+        }
         if (value.length < n) {
             this.writeUInt(value.length, minLengthBits);
         } else {
