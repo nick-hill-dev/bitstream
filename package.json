@@ -1,0 +1,21 @@
+{
+  "name": "bitstream",
+  "version": "1.0.0",
+  "description": "Read and write binary data on the bit level. With support for fine-tuning the storage BitStream is your one-stop shop for compact data representation.",
+  "bin": {
+    "bitstream": "bin/bitstream.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nick-hill-dev/bitstream.git"
+  },
+  "keywords": [
+    "bitstream"
+  ],
+  "author": "Nick Hill",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nick-hill-dev/bitstream/issues"
+  },
+  "homepage": "https://github.com/nick-hill-dev/bitstream#readme"
+}
